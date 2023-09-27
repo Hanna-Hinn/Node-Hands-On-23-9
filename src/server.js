@@ -12,6 +12,7 @@ const errorMiddleware = require("./middlewares/errorMiddleware.js");
 const app = express();
 
 // Defining the bodyParser middleWare on the whole application
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // server routes

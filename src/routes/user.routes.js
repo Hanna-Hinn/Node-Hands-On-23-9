@@ -10,14 +10,20 @@ const {
   deleteUser,
 } = require("../controllers/userControllers.js");
 
+const {
+  checkUserData,
+  checkUserId,
+  checkPutUserData,
+} = require("../middlewares/userValidationsMiddlewares.js");
+
 router.get("", getIndex);
 
-router.post("", postIndex);
+router.post("", checkUserData, postIndex);
 
-router.get("/:UserId", getUser);
+router.get("/:UserId", checkUserId, getUser);
 
-router.put("/:UserId", putUpdateUser);
+router.put("/:UserId", checkUserId, checkPutUserData, putUpdateUser);
 
-router.delete("/:UserId", deleteUser);
+router.delete("/:UserId", checkUserId, deleteUser);
 
 module.exports = router;

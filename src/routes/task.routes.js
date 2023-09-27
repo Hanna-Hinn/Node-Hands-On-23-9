@@ -10,14 +10,20 @@ const {
   deleteTask,
 } = require("../controllers/taskControllers.js");
 
+const {
+  checkTaskData,
+  checkTaskId,
+  checkPutTaskData,
+} = require("../middlewares/taskValidationsMiddlewares.js");
+
 router.get("", getIndex);
 
-router.post("", postIndex);
+router.post("", checkTaskData, postIndex);
 
-router.get("/:TaskId", getTask);
+router.get("/:TaskId", checkTaskId, getTask);
 
-router.put("/:TaskId", putUpdateTask);
+router.put("/:TaskId", checkTaskId, checkPutTaskData, putUpdateTask);
 
-router.delete("/:TaskId", deleteTask);
+router.delete("/:TaskId", checkTaskId, deleteTask);
 
 module.exports = router;
