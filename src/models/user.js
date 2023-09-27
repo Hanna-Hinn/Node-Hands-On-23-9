@@ -1,26 +1,26 @@
-import { Sequelize, DataTypes } from "sequelize";
-import sequelize from "../util/database";
+const Sequelize = require("sequelize");
+const sequelize = require("../util/database.js");
 
 class User extends Sequelize.Model {}
 
 User.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
     userName: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false,
     },
     email: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false,
       unique: true,
     },
     password: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false,
     },
   },
@@ -29,4 +29,4 @@ User.init(
   }
 );
 
-export default User;
+module.exports = User;

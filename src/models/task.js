@@ -1,29 +1,29 @@
-import { Sequelize, DataTypes } from "sequelize";
-import sequelize from "../util/database";
+const Sequelize = require("sequelize");
+const sequelize = require("../util/database.js");
 
 class Task extends Sequelize.Model {}
 
 Task.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
     title: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false,
     },
     description: {
-      type: DataTypes.TEXT,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     dueDate: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: false,
     },
     isCompleted: {
-      type: DataTypes.BOOLEAN,
+      type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: false,
     },
@@ -33,4 +33,4 @@ Task.init(
   }
 );
 
-export default Task;
+module.exports = Task;
