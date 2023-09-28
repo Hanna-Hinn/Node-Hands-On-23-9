@@ -20,10 +20,10 @@ router.get("", getIndex);
 
 router.post("", checkUserData, postIndex);
 
-router.get("/:UserId", checkUserId, getUser);
+router.get("/:userId", checkUserId, getUser);
 
-router.put("/:UserId", checkUserId, checkPutUserData, putUpdateUser);
+router.put("/:userId", checkUserId, checkPutUserData, putUpdateUser);
 
-router.delete("/:UserId", checkUserId, deleteUser);
+router.delete("/:userId", checkUserId, deleteUser);
 
 module.exports = router;

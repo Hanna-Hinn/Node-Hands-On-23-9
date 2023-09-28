@@ -20,10 +20,10 @@ router.get("", getIndex);
 
 router.post("", checkTaskData, postIndex);
 
-router.get("/:TaskId", checkTaskId, getTask);
+router.get("/:taskId", checkTaskId, getTask);
 
-router.put("/:TaskId", checkTaskId, checkPutTaskData, putUpdateTask);
+router.put("/:taskId", checkTaskId, checkPutTaskData, putUpdateTask);
 
-router.delete("/:TaskId", checkTaskId, deleteTask);
+router.delete("/:taskId", checkTaskId, deleteTask);
 
 module.exports = router;

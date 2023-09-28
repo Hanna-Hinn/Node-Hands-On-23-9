@@ -1,6 +1,6 @@
 // imports
 const { validationResult } = require("express-validator");
-
+const checkValidationResult = require("../util/checkValidatorError");
 const {
   createUser,
   fetchAllUsers,
@@ -12,8 +12,9 @@ const {
 // Fetching users
 const getIndex = (req, res) => {
   console.log("Fetching Users...");
-  const users = fetchAllUsers();
-  return res.json({ result: users });
+  fetchAllUsers().then((users) => {
+    return res.json({ result: users });
+  });
 };
 
 // creating a new user
@@ -30,12 +31,13 @@ const postIndex = (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  const status = createUser(username, email, password);
-  if (status) {
-    return res.status(200).json({ result: "User created Successfully" });
-  } else {
-    return res.status(500).json({ result: "User creation Failed" });
-  }
+  createUser(username, email, password).then((status) => {
+    if (status) {
+      return res.status(200).json({ result: "User created Successfully" });
+    } else {
+      return res.status(500).json({ result: "User creation Failed" });
+    }
+  });
 };
 
 // get user based on id
@@ -49,14 +51,22 @@ const getUser = (req, res) => {
     return res.status(422).json(checkError);
   }
 
-  const user = fetchUser(userId);
-  if (user) {
-    return res.status(200).json({ result: user });
-  } else {
-    return res.status(500).json({
-      result: "User fetching Failed \n Make Sure that the wanted user exists!",
+  fetchUser(userId)
+    .then((user) => {
+      console.log(user);
+      if (user) {
+        return res.status(200).json({ result: user });
+      } else {
+        return res.status(404).json({
+          result: "Please make Sure that the wanted user exists!",
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({
+        result: err.message || "Error Occurred while fetching the user",
+      });
     });
-  }
 };
 
 // Update user
@@ -68,17 +78,22 @@ const putUpdateUser = (req, res) => {
   const checkError = checkValidationResult(errors);
 
   if (checkError) {
-    return res.status(422).json(checkError);
+    return res.status(422).json({ result: `${checkError}` });
+  }
+  if (!updatedUser || Object.keys(updatedUser).length === 0) {
+    console.log("passed user is not Valid: ", updatedUser);
+    return res.status(422).json({ result: "Invalid user passed" });
   }
 
-  const status = UpdateUser(userId, updatedUser);
-  if (status) {
-    return res.status(200).json({ result: "User Successfully Updated" });
-  } else {
-    return res.status(500).json({
-      result: "User Updating Failed \n Make Sure that the wanted user exists!",
-    });
-  }
+  UpdateUser(userId, updatedUser).then((status) => {
+    if (status) {
+      return res.status(200).json({ result: "User Successfully Updated" });
+    } else {
+      return res.status(500).json({
+        result: "User Updating Failed , Make Sure that the wanted user exists!",
+      });
+    }
+  });
 };
 
 // Delete a user based on id
@@ -92,14 +107,16 @@ const deleteUser = (req, res) => {
     return res.status(422).json(checkError);
   }
 
-  const status = deleteUserById(userId);
-  if (status) {
-    return res.status(200).json({ result: "User Successfully Deleted" });
-  } else {
-    return res.status(500).json({
-      result: "User Deletion Failed \n Make Sure that the wanted user exists!",
-    });
-  }
+  deleteUserById(userId).then((status) => {
+    if (status) {
+      return res.status(200).json({ result: "User Successfully Deleted" });
+    } else {
+      return res.status(500).json({
+        result:
+          "User Deletion Failed , Make Sure that the wanted user exists!",
+      });
+    }
+  });
 };
 
 // exports

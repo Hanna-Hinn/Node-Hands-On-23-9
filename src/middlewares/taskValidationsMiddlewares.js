@@ -18,7 +18,7 @@ const checkTaskData = [
 ];
 
 const checkTaskId = [
-  param("userId", "Please enter a valid User Id in the params")
+  param("taskId", "Please enter a valid task Id in the params")
     .exists()
     .isNumeric()
     .notEmpty(),

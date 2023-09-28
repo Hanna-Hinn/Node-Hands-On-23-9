@@ -1,6 +1,6 @@
 // Imports
 const { validationResult } = require("express-validator");
-
+const checkValidationResult = require("../util/checkValidatorError");
 const {
   createTask,
   fetchAllTasks,
@@ -12,8 +12,9 @@ const {
 // Fetching all Data
 const getIndex = (req, res) => {
   console.log("Fetching Tasks...");
-  const tasks = fetchAllTasks();
-  return res.json({ result: tasks });
+  fetchAllTasks().then((tasks) => {
+    return res.json({ result: tasks });
+  });
 };
 
 // Creating new Instance of Data
@@ -23,7 +24,7 @@ const postIndex = (req, res) => {
   const checkError = checkValidationResult(errors);
 
   if (checkError) {
-    return res.status(422).json(checkError);
+    return res.status(422).json({ result: checkError });
   }
 
   const title = req.body.title;
@@ -31,12 +32,13 @@ const postIndex = (req, res) => {
   const dueDate = req.body.dueDate;
   const isCompleted = req.body.isCompleted;
 
-  const status = createTask(title, description, dueDate, isCompleted);
-  if (status) {
-    return res.status(200).json({ result: "Task created Successfully" });
-  } else {
-    return res.status(500).json({ result: "Task creation Failed" });
-  }
+  createTask(title, description, dueDate, isCompleted).then((status) => {
+    if (status) {
+      return res.status(200).json({ result: "Task created Successfully" });
+    } else {
+      return res.status(500).json({ result: "Task creation Failed" });
+    }
+  });
 };
 
 // Fetch Data based on ID
@@ -47,17 +49,19 @@ const getTask = (req, res) => {
   const checkError = checkValidationResult(errors);
 
   if (checkError) {
-    return res.status(422).json(checkError);
+    return res.status(422).json({ result: checkError });
   }
 
-  const task = fetchTask(taskId);
-  if (task) {
-    return res.status(200).json({ result: task });
-  } else {
-    return res.status(500).json({
-      result: "Task fetching Failed \n Make Sure that the wanted task exists!",
-    });
-  }
+  fetchTask(taskId).then((task) => {
+    if (task) {
+      return res.status(200).json({ result: task });
+    } else {
+      return res.status(500).json({
+        result:
+          "Task fetching Failed \n Make Sure that the wanted task exists!",
+      });
+    }
+  });
 };
 
 // Updated Data
@@ -69,17 +73,23 @@ const putUpdateTask = (req, res) => {
   const checkError = checkValidationResult(errors);
 
   if (checkError) {
-    return res.status(422).json(checkError);
+    return res.status(422).json({ result: `${checkError}` });
+  }
+  if (!updatedTask || Object.keys(updatedTask).length === 0) {
+    console.log("passed user is not Valid: ", updatedTask);
+    return res.status(422).json({ result: "Invalid user passed" });
   }
 
-  const status = UpdateTask(taskId, updatedTask);
-  if (status) {
-    return res.status(200).json({ result: "Task Successfully Updated" });
-  } else {
-    return res.status(500).json({
-      result: "Task Updating Failed \n Make Sure that the wanted task exists!",
-    });
-  }
+  UpdateTask(taskId, updatedTask).then((status) => {
+    if (status) {
+      return res.status(200).json({ result: "Task Successfully Updated" });
+    } else {
+      return res.status(500).json({
+        result:
+          "Task Updating Failed \n Make Sure that the wanted task exists!",
+      });
+    }
+  });
 };
 
 // delete a task
@@ -90,17 +100,19 @@ const deleteTask = (req, res) => {
   const checkError = checkValidationResult(errors);
 
   if (checkError) {
-    return res.status(422).json(checkError);
+    return res.status(422).json({ result: `${checkError}` });
   }
 
-  const status = deleteTaskById(taskId);
-  if (status) {
-    return res.status(200).json({ result: "Task Successfully Deleted" });
-  } else {
-    return res.status(500).json({
-      result: "Task Deletion Failed \n Make Sure that the wanted task exists!",
-    });
-  }
+  deleteTaskById(taskId).then((status) => {
+    if (status) {
+      return res.status(200).json({ result: "Task Successfully Deleted" });
+    } else {
+      return res.status(500).json({
+        result:
+          "Task Deletion Failed \n Make Sure that the wanted task exists!",
+      });
+    }
+  });
 };
 
 //exports
