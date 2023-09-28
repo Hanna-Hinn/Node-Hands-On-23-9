@@ -16,6 +16,7 @@ const {
   checkPutUserData,
 } = require("../middlewares/userValidationsMiddlewares.js");
 
+
 router.get("", getIndex);
 
 router.post("", checkUserData, postIndex);

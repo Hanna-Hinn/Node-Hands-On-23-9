@@ -7,6 +7,8 @@ const get404 = require("./controllers/error.js");
 const serverConfig = require("./config/server.config.js");
 const sequelize = require("./util/database.js");
 const errorMiddleware = require("./middlewares/errorMiddleware.js");
+const User = require("./models/user.js");
+const Task = require("./models/task.js");
 
 // Initializing the Express Application
 const app = express();
@@ -24,6 +26,10 @@ app.use(get404);
 
 // Error handling middleware
 app.use(errorMiddleware);
+
+// 1 - M between User and Task
+User.hasMany(Task);
+Task.belongsTo(User);
 
 sequelize
   // .sync({ force: true })
